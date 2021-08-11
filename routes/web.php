@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\Question\QuestionController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\User\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,4 +16,34 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+Auth::routes();
+
+Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.index');
+
+//группа страаниц админа
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
+
+    //группа страаниц для юзеров
+    Route::group(['prefix' => 'users', 'namespace' => 'Admin'], function () {
+        Route::get('/index', [UserController::class, 'index'])->name('users.index');
+        Route::get('/show/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
+        Route::patch('/update/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/destroy/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/store', [UserController::class, 'store'])->name('users.store');
+    });
+
+    //группа страаниц для вопросов
+    Route::group(['prefix' => 'questions', 'namespace' => 'Admin'], function () {
+        Route::get('/index', [QuestionController::class, 'index'])->name('questions.index');
+        Route::get('/show/{question}', [QuestionController::class, 'show'])->name('questions.show');
+        Route::get('/edit/{question}', [QuestionController::class, 'edit'])->name('questions.edit');
+        Route::patch('/update/{question}', [QuestionController::class, 'update'])->name('questions.update');
+        Route::delete('/destroy/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+        Route::get('/create', [QuestionController::class, 'create'])->name('questions.create');
+        Route::post('/store', [QuestionController::class, 'store'])->name('questions.store');
+    });
+
 });
