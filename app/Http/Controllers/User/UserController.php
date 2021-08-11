@@ -40,6 +40,19 @@ class UserController extends Controller
         $users = User::latest()->paginate(100);
         return redirect()->route('admin.users.index', compact('users'));
     }
+    public function store(Request $request)
+    {
+        //dd($request);
+        $data = $this->validate($request, [
+            'name' => 'required|string|max:255',
+            'email' => 'email|unique:users',
+        ]);
+        $data['password'] = bcrypt($request['password']);
+        $user = User::create($data);
+
+        $users = User::latest()->paginate(100);
+        return redirect()->route('admin.users.index', compact('users'));
+    }
     public function destroy(User $user) {
         $user->delete();
         return redirect('/admin/users/index');
