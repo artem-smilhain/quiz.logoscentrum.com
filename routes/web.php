@@ -3,7 +3,9 @@
 use App\Http\Controllers\Question\QuestionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
-use \App\Http\Controllers\Answer\AnswerController;
+use App\Http\Controllers\Answer\AnswerController;
+use App\Http\Controllers\Quiz\QuizController;
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,11 +22,11 @@ Route::get('/', function () {
 });
 Auth::routes();
 
-Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.index');
-
+Route::get('/admin', [HomeController::class, 'index'])->name('admin.index');
+Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
+Route::post('/store/session', [QuizController::class, 'session'])->name('quiz.session');
 //группа страаниц админа
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
-
     //группа страаниц для юзеров
     Route::group(['prefix' => 'users', 'namespace' => 'Admin'], function () {
         Route::get('/index', [UserController::class, 'index'])->name('users.index');
@@ -35,7 +37,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::get('/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/store', [UserController::class, 'store'])->name('users.store');
     });
-
     //группа страаниц для вопросов
     Route::group(['prefix' => 'questions', 'namespace' => 'Admin'], function () {
         Route::get('/index', [QuestionController::class, 'index'])->name('questions.index');
@@ -46,7 +47,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::get('/create', [QuestionController::class, 'create'])->name('questions.create');
         Route::post('/store', [QuestionController::class, 'store'])->name('questions.store');
     });
-
     //группа страаниц для ответов
     Route::group(['prefix' => 'answers', 'namespace' => 'Admin'], function () {
         Route::get('/index', [AnswerController::class, 'index'])->name('answers.index');
@@ -57,5 +57,4 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::get('/create', [AnswerController::class, 'create'])->name('answers.create');
         Route::post('/store', [AnswerController::class, 'store'])->name('answers.store');
     });
-
 });
