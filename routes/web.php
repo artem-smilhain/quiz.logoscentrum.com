@@ -17,16 +17,25 @@ use App\Http\Controllers\HomeController;
 |
 */
 
+Auth::routes(['verify' => true, 'register' => false]);
+
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 Auth::routes();
 
+Route::get('/thank-you', function () {
+    return view('client.thank_you');
+})->name('thank_you');
+
 Route::get('/admin', [HomeController::class, 'index'])->name('admin.index');
+//quiz
 Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
 Route::post('/store/session', [QuizController::class, 'session'])->name('quiz.session');
+Route::get('/quiz/form/index', [QuizController::class, 'form_index'])->name('quiz.form.index');
+Route::post('/quiz/form/send-form', [QuizController::class, 'send_form'])->name('quiz.form.send_form');
 //группа страаниц админа
-Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
     //группа страаниц для юзеров
     Route::group(['prefix' => 'users', 'namespace' => 'Admin'], function () {
         Route::get('/index', [UserController::class, 'index'])->name('users.index');

@@ -16,8 +16,8 @@
                                 <label for="{{ $answer->id }}">{{ $answer->content }}</label><br>
                             @endif
                         @endforeach
-                        <input type="hidden" value="<?php echo $_GET['page']; ?>" name="page">
-                        <button class="btn btn-primary mt-4" type="submit" name="action">Next question</button>
+                        <input type="hidden" value="<?php if(isset($_GET['page'])){echo $_GET['page'];}else{echo '1';}?>" name="page">
+                        <button class="btn btn-primary mt-4" type="submit" name="action">Ďalšia otázka</button>
                     </form>
                 </div>
             @endforeach
