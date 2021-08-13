@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->paginate(100);
+        $users = User::latest();
         return view('admin.users.index', compact('users'));
     }
     public function create()
@@ -27,7 +27,6 @@ class UserController extends Controller
         $data = $this->validate($request,
             [
                 'name' => 'string|max:255',
-                'surname' => 'string|max:255',
                 'email' => 'required|email|unique:users,email,'.$user->id,  //$user->id - чтобы не было проблем с unique
             ]);
         if (!empty($request['password'])) {
@@ -37,19 +36,17 @@ class UserController extends Controller
             $data['password'] = bcrypt($request['password']);
         }
         $user->update($data);
-        $users = User::latest()->paginate(100);
+        $users = User::latest();
         return redirect()->route('admin.users.index', compact('users'));
     }
     public function store(Request $request)
     {
-        //dd($request);
         $data = $this->validate($request, [
             'name' => 'required|string|max:255',
             'email' => 'email|unique:users',
         ]);
         $data['password'] = bcrypt($request['password']);
         $user = User::create($data);
-
         $users = User::latest()->paginate(100);
         return redirect()->route('admin.users.index', compact('users'));
     }

@@ -13,6 +13,7 @@ class Answer extends Model
         'content',
         'is_true',
         'question_id',
+        'image',
     ];
 
 

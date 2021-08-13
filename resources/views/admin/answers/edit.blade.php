@@ -65,7 +65,11 @@
                             <span class="invalid-feedback"><strong>{{ $errors->first('question_id') }}</strong></span>
                             @enderror
                         </div>
-
+                        <div class="form-group mt-3">
+                            <label for="image">Select image: </label>
+                            <input type="file" name="image" class="form-control">
+                        </div>
+                        <img src="/images/images/{{ $answer->image }}" alt="" class="mt-3"><br>
                         <button class="btn btn-primary mt-4" type="submit" name="action">Save answer</button>
                         <div class="clearfix"></div>
                     </form>

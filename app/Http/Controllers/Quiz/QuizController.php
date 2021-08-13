@@ -26,17 +26,14 @@ class QuizController extends Controller
     public function session(Request $request){
         //если массив в сессии пустой - тест только открыт
         if (Session::get('value') != null){
-
             //узнаем, на какой странице человек
             $request_page = $request->input('page');
             //узнаем ответ
             $request_answer = $request->input('question_answer');
             //делаем массив и записываем данные
             $arr = array('id'=>$request_page, 'value'=>$request_answer);
-
             //берем старый массив с данными из сессии
             $main_arr = Session::get('value');
-
             //проверяем, была ли уже эта страница
             if ($this->find_id($main_arr, $request_page)){
                 //если была - возвращаем новый массив
@@ -46,7 +43,6 @@ class QuizController extends Controller
                 //если страницы такой не было - добавляем в конец новые результаты
                 array_push($main_arr, $arr);
             }
-
         }
         else{
             //если тест только открыт - создаем пустой массив со всеми результатами
@@ -61,7 +57,6 @@ class QuizController extends Controller
         //return $main_arr;
         //делаем редирект на следующий вопросик
         $next = $request->input('page') + 1;
-
         //если номер следующей страницы больше, чем вопросов - переадресация на форму
         if ($next > Question::latest()->get()->count()){
             $rating = $this->get_rating(Session::get('value'));
@@ -71,7 +66,6 @@ class QuizController extends Controller
             return redirect('/quiz?page='.$next);
         }
     }
-
     //проверяем, не вносит ли клиент новый ответ в уже выполненный вопрос
     public function find_id($array, $id){
         $check = false;
@@ -82,7 +76,6 @@ class QuizController extends Controller
         }
         return $check;
     }
-
     //меняем страный ответ на новый
     public function replace($array, $id, $new_value){
         $i = 0;
@@ -95,7 +88,6 @@ class QuizController extends Controller
         }
         return $array;
     }
-
     //считаем баллы за тест
     public function get_rating($array){
         $count = 0;
@@ -104,7 +96,6 @@ class QuizController extends Controller
         }
         return $count;
     }
-
     //отправка данных формы клиента после теста
     public function send_form(Request $request){
         //новый клиент + его данные
@@ -131,7 +122,6 @@ class QuizController extends Controller
         //редирект на страницу благодарности
         return redirect()->route('thank_you');
     }
-
     //отправка письма
     public function mail_function($data, $contact){
         //отправка письма клиенту
@@ -147,12 +137,6 @@ class QuizController extends Controller
             $message->to($emails)->sender(env('MAIL_USERNAME'), $name = env('APP_NAME'))->subject('Консультация');
         });
     }
-
-    //отправляем письмо менеджеру Logos Centrum
-    public function logos_mail(){
-        return 1;
-    }
-
     //форма для отправки данных клиента
     public function form_index(){
         return view('client.client_data');

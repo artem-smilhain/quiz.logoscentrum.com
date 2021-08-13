@@ -60,6 +60,13 @@
                                 <span class="invalid-feedback"><strong>{{ $errors->first('question_id') }}</strong></span>
                                 @enderror
                             </div>
+                            <div class="form-group mt-3">
+                                <label for="image">Select image: </label>
+                                <input type="file" name="image" class="form-control" value="{{ old('image') }}">
+                                @if ($errors->has('image'))
+                                    <span class="invalid-feedback"><strong>{{ $errors->first('content') }}</strong></span>
+                                @endif
+                            </div>
                             <!--</div>
                         </div>-->
                         <button class="btn btn-primary mt-4" type="submit" name="action">Create answer !</button>

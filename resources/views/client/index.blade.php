@@ -1,6 +1,5 @@
 @extends('client.layouts.app')
 <!-- -->
-
 <?php
     if(isset($_GET['page'])){ $current_page = $_GET['page']; }
     else{ $current_page = '1'; }
@@ -8,12 +7,12 @@
 
 @section('content')
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-12 mt-3">
             @for($i = 1; $i <= $pages; $i++)
                 @if($i == $current_page)
-                    <span style="color: red;">{{ $i }}</span>
+                    <span><a href="/quiz?page={{ $i }}" style="color: #FAD108;">{{ $i }}</a></span>
                 @else
-                    <span style="color: gray;">{{ $i }}</span>
+                    <span><a href="/quiz?page={{ $i }}" style="color: gray;">{{ $i }}</a></span>
                 @endif
             @endfor
         </div>
@@ -30,11 +29,13 @@
                             <!-- выписываем варианты ответов, которые относяться к этому вопросу -->
                             @if($answer->question_id == $question->id)
                                 <input type="radio" id="{{ $answer->id }}" name="question_answer" value="{{ $answer->is_true }}">
-                                <label for="{{ $answer->id }}">{{ $answer->content }}</label><br>
+                                 <img src="/images/images/{{ $answer->image }}" alt="" style="max-height: 150px;">
+                                <label for="{{ $answer->id }}">{{ $answer->content }}</label>
+                                <br><br>
                             @endif
                         @endforeach
                         <input type="hidden" value="{{ $current_page }}" name="page">
-                        <button class="btn btn-primary mt-4" type="submit" name="action">Ďalšia otázka</button>
+                        <button class="btn btn-warning mt-4" type="submit" name="action">Ďalšia otázka</button>
                     </form>
                 </div>
             @endforeach
