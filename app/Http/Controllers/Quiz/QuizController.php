@@ -19,7 +19,8 @@ class QuizController extends Controller
     {
         $answers = Answer::latest()->get();
         $questions = Question::orderBy('id', 'asc')->paginate(1);
-        return view('client.index', compact('answers', 'questions'));
+        $pages = Question::latest()->get()->count();
+        return view('client.index', compact('answers', 'questions', 'pages'));
     }
 
     public function session(Request $request){

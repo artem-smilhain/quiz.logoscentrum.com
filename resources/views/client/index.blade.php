@@ -1,6 +1,23 @@
 @extends('client.layouts.app')
 <!-- -->
+
+<?php
+    if(isset($_GET['page'])){ $current_page = $_GET['page']; }
+    else{ $current_page = '1'; }
+?>
+
 @section('content')
+    <div class="row">
+        <div class="col-lg-12">
+            @for($i = 1; $i <= $pages; $i++)
+                @if($i == $current_page)
+                    <span style="color: red;">{{ $i }}</span>
+                @else
+                    <span style="color: gray;">{{ $i }}</span>
+                @endif
+            @endfor
+        </div>
+    </div>
     <div class="row">
         <div class="mt-4">
             @foreach($questions as $question)
@@ -16,15 +33,11 @@
                                 <label for="{{ $answer->id }}">{{ $answer->content }}</label><br>
                             @endif
                         @endforeach
-                        <input type="hidden" value="<?php if(isset($_GET['page'])){echo $_GET['page'];}else{echo '1';}?>" name="page">
+                        <input type="hidden" value="{{ $current_page }}" name="page">
                         <button class="btn btn-primary mt-4" type="submit" name="action">Ďalšia otázka</button>
                     </form>
                 </div>
             @endforeach
         </div>
     </div>
-
-    <!-- pagination -->
-
-    <!-- / -->
 @endsection
