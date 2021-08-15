@@ -16,52 +16,54 @@ use Intervention\Image\Facades\Image;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-    //меняем страный ответ на новый
-    public function replace($array, $id, $new_value){
-        $i = 0;
-        foreach ( $array as $element ) {
-            if ( $element['id'] == $id ) {
-                $element['value'] = $new_value;
-                $array[$i] = $element;
-            }
-            $i++;
-        }
-        return $array;
-    }
-
     //считаем баллы за тест
     public function get_rating($array){
         $count = 0;
         foreach ( $array as $element ) {
-            $count += $element['value'];
+            $count += $element;
         }
         return $count;
     }
-    //проверяем, не вносит ли клиент новый ответ в уже выполненный вопрос
-    public function find_id($array, $id){
-        $check = false;
-        foreach ( $array as $element ) {
-            if ( $element['id'] == $id ) {
-                $check = true;
-            }
-        }
-        return $check;
-    }
     //отправка письма
-    public function mail_function($data, $contact){
-        //отправка письма клиенту
-        Mail::send('client.email.email_template', $data, function($message) use ($contact) {
-            $message->to($contact->email)->sender(env('MAIL_USERNAME'), $name = env('APP_NAME'))->subject('Результат теста | Cловацкий язык');
-        });
+    public function send_data($data, $contact){
+
+        //отправка клиенту
+        $this->mail_sender(
+            'client.email.email_template',
+            $data,
+            $contact,
+            $contact->email,
+            'Результат теста | Cловацкий язык'
+        );
+
+        $subject = 'Тест по Словацкому';
+        $email = ['artemsmilhain+u2rasdbfprllon0fmkjo@boards.trello.com'];
+
+        if ($contact->consultation == 'on'){
+            $subject = 'Консультация';
+            $email = ['artemsmilhain+u2rasdbfprllon0fmkjo@boards.trello.com', 'artem.smilhain@grupa.agency'];
+            //dd($email);
+        }
+
         //отправка менеджеру
-        Mail::send('admin.email.email_template', $data, function($message) use ($contact) {
-            //почта trello, где будут данные тех, кто прошел тест
-            $emails = ['artemsmilhain+u2rasdbfprllon0fmkjo@boards.trello.com'];
-            //отправка менеджеру на почту, если клиенту нужна консультация
-            if ($contact->consultation == 'on'){ array_push($emails, 'artem.smilhain@grupa.agency'); }
-            $message->to($emails)->sender(env('MAIL_USERNAME'), $name = env('APP_NAME'))->subject('Консультация');
-        });
+        $this->mail_sender(
+            'admin.email.email_template',
+            $data,
+            $contact,
+            $email,
+            $subject
+        );
+    }
+
+    public function mail_sender($template, $data, $contact, $email, $subject){
+        Mail::send(
+            $template,
+            $data,
+            function($message) use ($contact, $email, $subject){
+                $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+                $message->to($email)->subject($subject);
+            }
+        );
     }
 
     public function image_processing($answer, $request, $check, $data){

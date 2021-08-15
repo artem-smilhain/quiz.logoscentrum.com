@@ -9,8 +9,7 @@
     <div class="row">
         <div class="col-lg-12 mt-3">
             @for($i = 1; $i <= $pages; $i++)
-                    <span>
-                        <a href="/quiz?page={{ $i }}"
+                    <span
                            @if($i == $current_page)
                             style="color: #FAD108;"
                            @else
@@ -18,7 +17,6 @@
                            @endif
                         >
                             {{ $i }}
-                        </a>
                     </span>
             @endfor
         </div>

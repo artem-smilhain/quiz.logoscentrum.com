@@ -22,6 +22,7 @@ Auth::routes(['verify' => true, 'register' => false]);
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
 Auth::routes();
 
 Route::get('/thank-you', function () {

@@ -4,9 +4,9 @@
     <!-- Edit Users -->
     <div class="row pt-3 pb-3">
         <div class="col-lg-12 text-left mb-3 mt-3">
-            <h2 class="m-0 p-0">Create new user: </h2>
+            <h2 class="m-0 p-0">Создать пользователя: </h2>
             <div>
-                <a href="{{ route('admin.users.index') }}" class="text-secondary" style="text-decoration: none;"> <- Go back to users</a>
+                <a href="{{ route('admin.users.index') }}" class="text-secondary" style="text-decoration: none;"> ◄ Вернуться обратно</a>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Name</label>
+                                    <label for="name">Имя</label>
                                     <div class="input-group">
                                         <input type="text" name="name" id="name" class="form-control validate @error('name') is-invalid @enderror" value="{{ old('name') }}" maxlength="255">
                                     </div>
@@ -55,7 +55,7 @@
 
                         <div class="row mb-2">
                             <div class="input-field col-md-6">
-                                <label for="password" class="bmd-label-floating">Password</label>
+                                <label for="password" class="bmd-label-floating">Пароль</label>
                                 <div class="input-group">
                                     <input type="password" name="password" id="password" class="form-control validate @error('password') is-invalid @enderror">
                                 </div>
@@ -68,13 +68,13 @@
 
                         <div class="row mb-3">
                             <div class="input-field col-md-6">
-                                <label for="password_repeat">Repeat Password</label>
+                                <label for="password_repeat">Повтор пароля</label>
                                 <div class="input-group">
                                     <input type="password" class="form-control validate" id="password_repeat">
                                 </div>
                             </div>
                         </div>
-                        <button class="btn btn-primary mt-4" type="submit" name="action">Create User !</button>
+                        <button class="btn btn-warning mt-4" type="submit" name="action">Сохранить</button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
