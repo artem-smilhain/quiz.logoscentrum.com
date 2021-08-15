@@ -13,8 +13,9 @@ class QuestionController extends Controller
 {
     public function index()
     {
-        $questions = $this->get_questions();
-        return view('admin.questions.index', compact('questions'));
+        return view('admin.questions.index', [
+            'questions' => Question::latest()->get()
+        ]);
     }
     public function create()
     {
@@ -22,31 +23,26 @@ class QuestionController extends Controller
     }
     public function store(Request $request)
     {
-        $data = $this->validate_data($request);
-        Question::create($data);
-        $questions = $this->get_questions();
-        return redirect()->route('admin.questions.index', compact('questions'));
+        Question::create($this->validate_data($request));
+        return redirect()->route('admin.questions.index', [
+            'questions' => Question::latest()->get()
+        ]);
     }
     public function edit(Question $question) {
-        return view('admin.questions.edit', compact('question'));
+        return view('admin.questions.edit', compact(
+            'question'
+        ));
     }
     public function update(Request $request, Question $question) {
-        $data = $this->validate_data($request);
-        $question->update($data);
-        $questions = $this->get_questions();
-        return redirect()->route('admin.questions.index', compact('questions'));
+        $question->update($this->validate_data($request));
+        return redirect()->route('admin.questions.index', [
+            'questions' => Question::latest()->get()
+        ]);
     }
     public function destroy(Question $question) {
         $question->delete();
         return redirect('/admin/questions/index');
     }
-    public function get_questions(){
-        return Question::latest()->get();
-    }
-    public function get_answers(){
-        return Answer::latest()->get();
-    }
-
     public function validate_data($request){
         return $this->validate($request,
             [

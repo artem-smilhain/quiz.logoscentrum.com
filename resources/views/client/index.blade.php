@@ -9,11 +9,17 @@
     <div class="row">
         <div class="col-lg-12 mt-3">
             @for($i = 1; $i <= $pages; $i++)
-                @if($i == $current_page)
-                    <span><a href="/quiz?page={{ $i }}" style="color: #FAD108;">{{ $i }}</a></span>
-                @else
-                    <span><a href="/quiz?page={{ $i }}" style="color: gray;">{{ $i }}</a></span>
-                @endif
+                    <span>
+                        <a href="/quiz?page={{ $i }}"
+                           @if($i == $current_page)
+                            style="color: #FAD108;"
+                           @else
+                            style="color: #666666;"
+                           @endif
+                        >
+                            {{ $i }}
+                        </a>
+                    </span>
             @endfor
         </div>
     </div>
@@ -24,15 +30,13 @@
                 <div class="mt-3 mb-3">
                     <form method="post" action="{{route('quiz.session')}}" enctype="multipart/form-data">
                         @csrf
-                        <!-- перебираем все наши вопросы -->
-                        @foreach($answers as $answer)
-                            <!-- выписываем варианты ответов, которые относяться к этому вопросу -->
-                            @if($answer->question_id == $question->id)
-                                <input type="radio" id="{{ $answer->id }}" name="question_answer" value="{{ $answer->is_true }}">
-                                 <img src="/images/images/{{ $answer->image }}" alt="" style="max-height: 150px;">
-                                <label for="{{ $answer->id }}">{{ $answer->content }}</label>
+                        @foreach($question->answer as $answer)
+                                <label for="{{ $answer->id }}" style="cursor: pointer;">
+                                    <input type="radio" id="{{ $answer->id }}" name="question_answer" value="{{ $answer->is_true }}">
+                                    <img src="/images/images/{{ $answer->image }}" alt="" style="max-height: 150px;">
+                                    {{ $answer->content }}
+                                </label>
                                 <br><br>
-                            @endif
                         @endforeach
                         <input type="hidden" value="{{ $current_page }}" name="page">
                         <button class="btn btn-warning mt-4" type="submit" name="action">Ďalšia otázka</button>

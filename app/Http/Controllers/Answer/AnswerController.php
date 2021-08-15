@@ -14,98 +14,56 @@ class AnswerController extends Controller
 {
     public function index()
     {
-        $answers = $this->get_answers();
-        $questions = $this->get_questions();
-
-        return view('admin.answers.index', compact(
-            'answers',
-            'questions'
-        ));
+        return view('admin.answers.index', [
+            'answers' => Answer::latest()->get(),
+            'questions' => Question::latest()->get()
+        ]);
     }
     public function create()
     {
-        $questions = $this->get_questions();
-        return view('admin.answers.create', compact(
-            'questions'
-        ));
+        return view('admin.answers.create', [
+            'questions' => Question::latest()->get()
+        ]);
     }
     public function edit(Answer $answer) {
-        $questions = $this->get_questions();
-        return view('admin.answers.edit', compact(
-            'answer',
-            'questions'
-        ));
+        return view('admin.answers.edit', compact('answer'), [
+            'questions' => Question::latest()->get()
+        ]);
     }
+    //
     public function store(Request $request)
     {
-        //валидация
-        $data = $this->validate_data($request);
         //обраюботка фото
-        if ($request->hasFile('image')) {
-            $data = $this->image_processing(null, $request, false, $data);
-        }
+        $data = Controller::image_processing(null, $request, false, $this->validate_data($request));
         //сохраняем данные
         Answer::create($data);
-
         //переадресация
-        $answers = $this->get_answers();
-        return redirect()->route(
-            'admin.answers.index',
-            compact(
-                'answers'
-            )
+        return redirect()->route('admin.answers.index',
+            [
+                'answers' => Answer::latest()->get()
+            ]
         );
     }
     public function update(Request $request, Answer $answer) {
-        //валидация
-        $data = $this->validate_data($request);
         //обраюботка фото
-        if ($request->hasFile('image')) {
-            $data = $this->image_processing($answer, $request, true, $data);
-        }
+        $data = Controller::image_processing($answer, $request, true, $this->validate_data($request));
         //сохраняем ответ
         $answer->update($data);
-        $answers = $this->get_answers();
-        return redirect()->route(
-            'admin.answers.index',
-            compact(
-                'answers'
-            )
+        return redirect()->route('admin.answers.index',
+            [
+                'answers' => Answer::latest()->get()
+            ]
         );
     }
     public function destroy(Answer $answer) {
         //удалаяем фотку
-        $filename = $answer->image;
-        Storage::disk('local')->delete('public/images/'.$filename);
+        Storage::disk('local')->delete('public/images/'.$answer->image);
         //удалаяем сам вариант ответа
         $answer->delete();
-        //
         return redirect(
             '/admin/answers/index'
         );
     }
-    public function image_processing($answer, $request, $check, $data){
-        $img = $request->file('image');
-        $filename = time() . '.' . $img->getClientOriginalExtension();
-        $image = Image::make($img)->resize(500, 500, function ($constraint) {
-            $constraint->aspectRatio(); // не теряем соотношение сторон
-        });
-        $image->stream();
-        if ($check == true){
-            Storage::disk('local')->delete('public/images/'.$answer->image);
-        }
-        Storage::disk('local')->put('public/images/'.$filename, $image, 'public');
-        $data['image'] = $filename;
-        //get back наши данные из функции
-        return $data;
-    }
-    public function get_questions(){
-        return Question::latest()->get();
-    }
-    public function get_answers(){
-        return Answer::latest()->get();
-    }
-
     public function validate_data($request){
         return $this->validate($request,
             [

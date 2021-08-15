@@ -17,12 +17,17 @@ class QuizController extends Controller
 
     public function index()
     {
-        $answers = Answer::latest()->get();
-        $questions = Question::orderBy('id', 'asc')->paginate(1);
-        $pages = Question::latest()->get()->count();
-        return view('client.index', compact('answers', 'questions', 'pages'));
+        return view('client.index', [
+            'answers' => Question::with('answer')->get(),
+            'questions' => Question::orderBy('id', 'asc')->paginate(1),
+            'pages' => Question::latest()->get()->count()
+        ]);
     }
-
+    //форма для отправки данных клиента
+    public function form_index(){
+        return view('client.client_data');
+    }
+    //
     public function session(Request $request){
         //если массив в сессии пустой - тест только открыт
         if (Session::get('value') != null){
@@ -35,9 +40,9 @@ class QuizController extends Controller
             //берем старый массив с данными из сессии
             $main_arr = Session::get('value');
             //проверяем, была ли уже эта страница
-            if ($this->find_id($main_arr, $request_page)){
+            if (Controller::find_id($main_arr, $request_page)){
                 //если была - возвращаем новый массив
-                $main_arr = $this->replace($main_arr, $request_page, $request_answer);
+                $main_arr = Controller::replace($main_arr, $request_page, $request_answer);
             }
             else{
                 //если страницы такой не было - добавляем в конец новые результаты
@@ -59,42 +64,12 @@ class QuizController extends Controller
         $next = $request->input('page') + 1;
         //если номер следующей страницы больше, чем вопросов - переадресация на форму
         if ($next > Question::latest()->get()->count()){
-            $rating = $this->get_rating(Session::get('value'));
+            $rating = Controller::get_rating(Session::get('value'));
             return view('client.client_data', compact('rating'));
         }
         else{
             return redirect('/quiz?page='.$next);
         }
-    }
-    //проверяем, не вносит ли клиент новый ответ в уже выполненный вопрос
-    public function find_id($array, $id){
-        $check = false;
-        foreach ( $array as $element ) {
-            if ( $element['id'] == $id ) {
-                $check = true;
-            }
-        }
-        return $check;
-    }
-    //меняем страный ответ на новый
-    public function replace($array, $id, $new_value){
-        $i = 0;
-        foreach ( $array as $element ) {
-            if ( $element['id'] == $id ) {
-                $element['value'] = $new_value;
-                $array[$i] = $element;
-            }
-            $i++;
-        }
-        return $array;
-    }
-    //считаем баллы за тест
-    public function get_rating($array){
-        $count = 0;
-        foreach ( $array as $element ) {
-            $count += $element['value'];
-        }
-        return $count;
     }
     //отправка данных формы клиента после теста
     public function send_form(Request $request){
@@ -116,29 +91,10 @@ class QuizController extends Controller
             'questions_count' => $contact->questions_count,
         ];
         //отправка письма
-        $this->mail_function($data, $contact);
+        Controller::mail_function($data, $contact);
         //обнуляем нашу сессию
         Session::put('value', array());
         //редирект на страницу благодарности
         return redirect()->route('thank_you');
-    }
-    //отправка письма
-    public function mail_function($data, $contact){
-        //отправка письма клиенту
-        Mail::send('client.email.email_template', $data, function($message) use ($contact) {
-            $message->to($contact->email)->sender(env('MAIL_USERNAME'), $name = env('APP_NAME'))->subject('Результат теста | Cловацкий язык');
-        });
-        //отправка менеджеру
-        Mail::send('admin.email.email_template', $data, function($message) use ($contact) {
-            //почта trello, где будут данные тех, кто прошел тест
-            $emails = ['artemsmilhain+u2rasdbfprllon0fmkjo@boards.trello.com'];
-            //отправка менеджеру на почту, если клиенту нужна консультация
-            if ($contact->consultation == 'on'){ array_push($emails, 'artem.smilhain@grupa.agency'); }
-            $message->to($emails)->sender(env('MAIL_USERNAME'), $name = env('APP_NAME'))->subject('Консультация');
-        });
-    }
-    //форма для отправки данных клиента
-    public function form_index(){
-        return view('client.client_data');
     }
 }

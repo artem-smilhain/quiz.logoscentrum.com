@@ -12,4 +12,10 @@ class Question extends Model
     protected $fillable = [
         'content',
     ];
+
+    public function answer()
+    {
+        return $this->hasMany('App\Models\Answer', 'question_id');
+    }
+
 }
