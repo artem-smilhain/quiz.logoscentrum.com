@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-group mb-2">
                     <label for="consultation">Хочу консультацию</label>
-                    <input type="radio" name="consultation" id="consultation">
+                    <input type="checkbox" name="consultation" id="consultation">
                 </div>
                 <input type="hidden" name="rating" id="rating" value="{{ $rating }}">
                 <button type="submit" class="btn btn-success">Send it</button>

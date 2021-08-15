@@ -37,11 +37,11 @@ class Controller extends BaseController
         );
 
         $subject = 'Тест по Словацкому';
-        $email = ['artemsmilhain+u2rasdbfprllon0fmkjo@boards.trello.com'];
+        $email = ['quiz.trello@logoscentrum.com'];
 
         if ($contact->consultation == 'on'){
             $subject = 'Консультация';
-            $email = ['artemsmilhain+u2rasdbfprllon0fmkjo@boards.trello.com', 'artem.smilhain@grupa.agency'];
+            $email = ['quiz.trello@logoscentrum.com', 'sales.trello@logoscentrum.com', 'sales@logoscentrum.com'];
             //dd($email);
         }
 
